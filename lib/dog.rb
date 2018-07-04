@@ -40,28 +40,33 @@ class Dog
   end
 
   def self.new_from_db(row)
-    new_dog = self.name(name: row[1], breed: row[2], id: row[0])
-    new_dog
-  end
-
-  def self.find_by_name(name)
-    sql = "SELECT * FROM dogs WHERE name = ? LIMIT 1"
-    DB[:conn].execute(sql, name).map{|row| self.new_from_db(row)}.first
-  end
-
-  def self.find_by_id(id)
-    sql = "SELECT * FROM dogs WHERE id = ? LIMIT 1"
-    DB[:conn].execute(sql, id).map{|row| self.new_from_db(row)}.first
-  end
-
-  def self.find_or_create_by(name:, breed:)
-    sql = "SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1"
-    dog_info = DB[:conn].execute(sql, name, breed)
-    if dog_info == []
-      dog = self.create({name: name, breed: breed})
-    else
-      dog = self.new_from_db(dog_info[0])
+      new_dog = self.new(name: row[1], breed: row[2], id: row[0])
+      new_dog
     end
-    dog
-  end
+
+    def self.find_by_name(name)
+      sql = "SELECT * FROM dogs WHERE name = ? LIMIT 1"
+      DB[:conn].execute(sql, name).map { |row|
+        self.new_from_db(row)
+      }.first
+    end
+
+    def self.find_by_id(id)
+      sql = "SELECT * FROM dogs WHERE id = ? LIMIT 1"
+      DB[:conn].execute(sql, id).map { |row|
+        self.new_from_db(row)
+      }.first
+    end
+
+    def self.find_or_create_by(name: , breed:)
+      sql_select = "SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1"
+
+      dog_data = (DB[:conn].execute(sql_select, name, breed))
+      if dog_data == []
+        dog = self.create({name: name, breed: breed})
+      else
+        dog = self.new_from_db(dog_data[0])
+      end
+      dog
+    end
 end
