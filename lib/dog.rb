@@ -56,7 +56,7 @@ class Dog
 
   def self.find_or_create_by(name:, breed:)
     sql = "SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1"
-    dog_info = (DB[:conn].execute(sql, name, breed))
+    dog_info = DB[:conn].execute(sql, name, breed)
     if dog_info == []
       dog = self.create({name: name, breed: breed})
     else
