@@ -49,6 +49,11 @@ class Dog
     DB[:conn].execute(sql, name).map{|row| self.new_from_db(row)}.first
   end
 
+  def self.find_by_id(id)
+    sql = "SELECT * FROM dogs WHERE id = ? LIMIT 1"
+    DB[:conn].execute(sql, id).map{|row| self.new_from_db(row)}.first
+  end
+
   def self.find_or_create_by(name:, breed:)
     sql = "SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1"
     dog_info = (DB[:conn].execute(sql, name, breed))
