@@ -22,4 +22,16 @@ class Dog
     if self.id
       self.update
     else
-      sql = "INSERT NTO dogs(name, breed) VALUES (?, ?)"
+      sql = "INSERT NTO dogs(name, breed) VALUES (?, ?);"
+      DB[:conn].execute(sql, @name, @breed)
+      @id + DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    end
+    self
+  end
+
+  def update
+    sql "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
+  
